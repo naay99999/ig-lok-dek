@@ -4,30 +4,99 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { currentUser } from "@/lib/mock-data"
 import {
   Home,
   Search,
   Compass,
-  Film,
+  PlaySquare,
   Heart,
-  PlusSquare,
+  Plus,
   Menu,
   LayoutGrid,
   MessageCircle,
+  Instagram,
 } from "lucide-react"
 
+// --- Configuration ---
 const navItems = [
   { icon: Home, label: "Home", href: "/", filled: true },
-  { icon: Film, label: "Reels", href: "#" },
+  { icon: PlaySquare, label: "Reels", href: "#" },
   { icon: MessageCircle, label: "Messages", href: "#", badge: 6 },
   { icon: Search, label: "Search", href: "#" },
   { icon: Compass, label: "Explore", href: "#" },
   { icon: Heart, label: "Notifications", href: "#", dot: true },
-  { icon: PlusSquare, label: "Create", href: "#" },
+  { icon: Plus, label: "Create", href: "#" },
 ]
 
+const bottomItems = [
+  { icon: Menu, label: "More" },
+  { icon: LayoutGrid, label: "Also from Meta" },
+]
+
+// --- Reusable Sidebar Item Component ---
+function SidebarItem({
+  icon: Icon,
+  label,
+  href,
+  isActive,
+  isExpanded,
+  badge,
+  dot,
+  filled,
+  children
+}) {
+  const content = (
+    <>
+      <div className="relative flex items-center justify-center shrink-0 pointer-events-none">
+        {Icon && (
+          <Icon
+            className={cn("h-6 w-6", isActive && filled && "fill-foreground")}
+            strokeWidth={isActive ? 2.5 : 1.5}
+          />
+        )}
+        {children}
+
+        {badge && (
+          <span className="absolute -right-2 -top-2 flex h-4 w-4 box-content items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white border-2 border-background">
+            {badge}
+          </span>
+        )}
+        {dot && (
+          <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 box-content rounded-full bg-red-500 border-2 border-background" />
+        )}
+      </div>
+
+      <span
+        className={cn(
+          "ml-4 overflow-hidden whitespace-nowrap transition-all duration-300",
+          isExpanded ? "w-auto opacity-100" : "w-0 opacity-0"
+        )}
+      >
+        {label}
+      </span>
+    </>
+  )
+
+  const containerClasses = cn(
+    "flex items-center rounded-lg px-3 py-2 transition-colors hover:bg-accent w-full text-left",
+    isActive && "font-semibold"
+  )
+
+  return href ? (
+    <Link href={href} className={containerClasses}>
+      {content}
+    </Link>
+  ) : (
+    <button className={cn(containerClasses, "py-3")}>
+      {content}
+    </button>
+  )
+}
+
+// --- Main Sidebar Component ---
 export function LeftSidebar() {
   const pathname = usePathname()
   const [isExpanded, setIsExpanded] = useState(false)
@@ -37,121 +106,48 @@ export function LeftSidebar() {
       onMouseEnter={() => setIsExpanded(true)}
       onMouseLeave={() => setIsExpanded(false)}
       className={cn(
-        "fixed left-0 top-0 z-40 hidden h-full flex-col border-r border-border bg-background px-3 py-6 transition-all duration-300 ease-in-out md:flex",
+        "fixed left-0 top-0 z-40 hidden h-full flex-col justify-between bg-background px-3 py-6 transition-all duration-300 ease-in-out md:flex",
         isExpanded ? "w-[220px]" : "w-[72px]"
       )}
     >
-      {/* Logo */}
-      <Link href="/" className="mb-8 flex items-center px-3 py-3">
-        <svg
-          className="h-6 w-6 shrink-0"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <rect x="2" y="2" width="20" height="20" rx="5" />
-          <circle cx="12" cy="12" r="4" />
-          <circle cx="18" cy="6" r="1.5" fill="currentColor" />
-        </svg>
-        <span
-          className={cn(
-            "ml-4 overflow-hidden text-xl font-semibold tracking-tight transition-all duration-300",
-            isExpanded ? "w-auto opacity-100" : "w-0 opacity-0"
-          )}
-        >
-          Pictura
-        </span>
+      {/* 1. Logo (จะอยู่ชิดขอบบน) */}
+      <Link href="/">
+        <Button variant="ghost" size="icon-lg" className="shrink-0 px-3">
+          <Instagram className="h16 w-6" />
+        </Button>
       </Link>
 
-      {/* Navigation */}
-      <nav className="flex flex-1 flex-col gap-0.5">
-        {navItems.map((item) => {
-          const isActive = pathname === item.href
-          return (
-            <Link
-              key={item.label}
-              href={item.href}
-              className={cn(
-                "group relative flex items-center rounded-lg px-3 py-3 transition-colors hover:bg-accent",
-                isActive && "font-semibold"
-              )}
-            >
-              <div className="relative shrink-0">
-                <item.icon
-                  className={cn(
-                    "h-6 w-6",
-                    isActive && item.filled && "fill-foreground"
-                  )}
-                  strokeWidth={isActive ? 2.5 : 1.5}
-                />
-                {item.badge && (
-                  <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-white">
-                    {item.badge}
-                  </span>
-                )}
-                {item.dot && (
-                  <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-destructive" />
-                )}
-              </div>
-              <span
-                className={cn(
-                  "ml-4 overflow-hidden whitespace-nowrap transition-all duration-300",
-                  isExpanded ? "w-auto opacity-100" : "w-0 opacity-0"
-                )}
-              >
-                {item.label}
-              </span>
-            </Link>
-          )
-        })}
+      {/* 2. Nav Menu (จะอยู่ตรงกลางหน้าจอ) */}
+      <nav className="flex flex-col gap-3">
+        {navItems.map((item) => (
+          <SidebarItem
+            key={item.label}
+            {...item}
+            isActive={pathname === item.href}
+            isExpanded={isExpanded}
+          />
+        ))}
 
-        {/* Profile */}
-        <Link
-          href="#"
-          className="group flex items-center rounded-lg px-3 py-3 transition-colors hover:bg-accent"
-        >
-          <Avatar className="h-6 w-6 shrink-0">
+        {/* Profile Item */}
+        <SidebarItem href="#" label="Profile" isExpanded={isExpanded}>
+          <Avatar className="h-6 w-6">
             <AvatarImage src={currentUser.avatar} alt={currentUser.username} />
             <AvatarFallback className="text-[10px]">
               {currentUser.username.slice(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
-          <span
-            className={cn(
-              "ml-4 overflow-hidden whitespace-nowrap transition-all duration-300",
-              isExpanded ? "w-auto opacity-100" : "w-0 opacity-0"
-            )}
-          >
-            Profile
-          </span>
-        </Link>
+        </SidebarItem>
       </nav>
 
-      {/* Bottom section */}
-      <div className="mt-auto flex flex-col gap-0.5">
-        <button className="group flex items-center rounded-lg px-3 py-3 transition-colors hover:bg-accent">
-          <Menu className="h-6 w-6 shrink-0" strokeWidth={1.5} />
-          <span
-            className={cn(
-              "ml-4 overflow-hidden whitespace-nowrap transition-all duration-300",
-              isExpanded ? "w-auto opacity-100" : "w-0 opacity-0"
-            )}
-          >
-            More
-          </span>
-        </button>
-        <button className="group flex items-center rounded-lg px-3 py-3 transition-colors hover:bg-accent">
-          <LayoutGrid className="h-6 w-6 shrink-0" strokeWidth={1.5} />
-          <span
-            className={cn(
-              "ml-4 overflow-hidden whitespace-nowrap transition-all duration-300",
-              isExpanded ? "w-auto opacity-100" : "w-0 opacity-0"
-            )}
-          >
-            Also from Meta
-          </span>
-        </button>
+      {/* 3. Bottom Section (จะอยู่ชิดขอบล่าง) */}
+      <div className="flex flex-col gap-2">
+        {bottomItems.map((item) => (
+          <SidebarItem
+            key={item.label}
+            {...item}
+            isExpanded={isExpanded}
+          />
+        ))}
       </div>
     </aside>
   )
