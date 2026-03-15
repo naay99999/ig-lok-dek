@@ -15,18 +15,16 @@ export default function Home() {
       <MobileNavbar />
 
       {/* Main content area */}
-      <div className="lg:pl-[72px]">
-        <main className="mx-auto flex max-w-[935px] justify-center pb-16 pt-14 lg:pb-8 lg:pt-0">
-          {/* Feed column */}
-          <div className="w-full max-w-[470px] px-0 lg:px-0 lg:pt-8">
-            <Feed />
-            <Footer />
-          </div>
+      <main className="flex mx-auto justify-center gap-0 md:gap-16 pb-16 pt-14 md:pb-8 md:pt-0">
+        {/* Feed column */}
+        <div className="w-full max-w-[630px] lg:pt-4">
+          <Feed />
+          <Footer />
+        </div>
 
-          {/* Right Sidebar - Desktop XL only */}
-          <RightSidebar />
-        </main>
-      </div>
+        {/* Right Sidebar - Desktop XL only */}
+        <RightSidebar />
+      </main>
 
       {/* Floating Messages Button */}
       <MessagesButton />

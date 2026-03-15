@@ -9,7 +9,7 @@ export function MobileNavbar() {
   return (
     <>
       {/* Mobile Top Bar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex h-14 items-center justify-between border-b border-border bg-background px-4 lg:hidden">
+      <nav className="fixed top-0 left-0 right-0 z-50 flex h-14 items-center justify-between border-b border-border bg-background px-4 md:hidden">
         <Link href="/" className="text-xl font-semibold tracking-tight text-foreground">
           Pictura
         </Link>

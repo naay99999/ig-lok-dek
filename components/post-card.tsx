@@ -34,13 +34,13 @@ export function PostCard({ post }: PostCardProps) {
   }
 
   return (
-    <article className="border-b border-border bg-background pb-3">
+    <article className="bg-background">
       {/* Header */}
       <div className="flex items-center justify-between px-1 py-3">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-tr from-amber-500 via-rose-500 to-fuchsia-500 p-[2px]">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-tr from-amber-500 via-rose-500 to-fuchsia-500 p-[2px]">
             <div className="flex h-full w-full items-center justify-center rounded-full bg-background p-[1px]">
-              <Avatar className="h-7 w-7">
+              <Avatar className="h-8 w-8">
                 <AvatarImage src={post.user.avatar} alt={post.user.username} className="object-cover" />
                 <AvatarFallback className="bg-muted text-muted-foreground text-[10px]">
                   {post.user.username.slice(0, 2).toUpperCase()}

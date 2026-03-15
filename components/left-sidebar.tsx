@@ -37,7 +37,7 @@ export function LeftSidebar() {
       onMouseEnter={() => setIsExpanded(true)}
       onMouseLeave={() => setIsExpanded(false)}
       className={cn(
-        "fixed left-0 top-0 z-40 hidden h-full flex-col border-r border-border bg-background px-3 py-6 transition-all duration-300 ease-in-out lg:flex",
+        "fixed left-0 top-0 z-40 hidden h-full flex-col border-r border-border bg-background px-3 py-6 transition-all duration-300 ease-in-out md:flex",
         isExpanded ? "w-[220px]" : "w-[72px]"
       )}
     >

@@ -26,7 +26,7 @@ const footerLinks = [
 
 export function RightSidebar() {
   return (
-    <aside className="hidden w-[320px] shrink-0 pl-8 pt-8 xl:block">
+    <aside className="hidden w-[320px] shrink-0 pt-8 xl:block">
       {/* Current user profile */}
       <div className="flex items-center justify-between">
         <Link href="#" className="flex items-center gap-3">
@@ -59,10 +59,10 @@ export function RightSidebar() {
           </button>
         </div>
 
-        <div className="mt-4 flex flex-col gap-3">
+        <div className="mt-4 flex flex-col gap-4">
           {suggestedUsers.map((user) => (
             <div key={user.id} className="flex items-center justify-between">
-              <Link href="#" className="flex items-center gap-3">
+              <Link href="#" className="flex items-center gap-4">
                 <Avatar className="h-11 w-11">
                   <AvatarImage src={user.avatar} alt={user.username} />
                   <AvatarFallback>
@@ -99,7 +99,7 @@ export function RightSidebar() {
           ))}
         </div>
         <p className="mt-4 text-xs text-muted-foreground/60">
-          © 2026 PICTURA FROM EXAMPLE
+          © 2026 Instagram from Meta
         </p>
       </div>
     </aside>
