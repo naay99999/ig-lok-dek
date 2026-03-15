@@ -1,15 +1,12 @@
-import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/next'
-import './globals.css'
-
-const _geist = Geist({ subsets: ["latin"] });
-const _geistMono = Geist_Mono({ subsets: ["latin"] });
+import type { Metadata } from "next"
+import { Analytics } from "@vercel/analytics/next"
+import "maplibre-gl/dist/maplibre-gl.css"
+import "./globals.css"
 
 export const metadata: Metadata = {
-  title: 'Pictura - Share Your Moments',
-  description: 'A beautiful social photo sharing platform',
-  generator: 'v0.app',
+  title: "Visitor Sessions Demo",
+  description: "Consent-based visitor session capture with an internal review dashboard.",
+  generator: "Codex",
   icons: {
     icon: [
       {
