@@ -234,3 +234,78 @@ export function PostDetailSkeleton() {
     </div>
   )
 }
+
+export function RightSidebarSkeleton() {
+  return (
+    <aside className="hidden w-[320px] shrink-0 pt-8 xl:block">
+      {/* Current user profile */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Skeleton className="h-11 w-11 rounded-full" />
+          <div className="flex flex-col gap-2">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-3 w-16" />
+          </div>
+        </div>
+        <Skeleton className="h-4 w-10" />
+      </div>
+
+      {/* Suggested for you */}
+      <div className="mt-6">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-4 w-28" />
+          <Skeleton className="h-3 w-10" />
+        </div>
+
+        <div className="mt-4 flex flex-col gap-4">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Skeleton className="h-11 w-11 rounded-full" />
+                <div className="flex flex-col gap-2">
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-3 w-32" />
+                </div>
+              </div>
+              <Skeleton className="h-4 w-10" />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Footer links */}
+      <div className="mt-8 flex flex-col gap-4">
+        <div className="flex flex-wrap gap-x-1.5 gap-y-2">
+          {Array.from({ length: 10 }).map((_, i) => (
+            <Skeleton key={i} className="h-3 w-12" />
+          ))}
+        </div>
+        <Skeleton className="h-3 w-32" />
+      </div>
+    </aside>
+  )
+}
+
+export function MessagesButtonSkeleton() {
+  return (
+    <div className="fixed bottom-6 right-6 z-50 hidden items-center gap-4 rounded-full bg-white px-4 py-4 shadow-[0_4px_24px_rgba(0,0,0,0.12)] lg:flex">
+      {/* Notification badge placeholder */}
+      <div className="relative">
+        <Skeleton className="h-6 w-6 rounded-md" />
+        <Skeleton className="absolute top-[-8px] right-[-8px] h-5 w-5 rounded-full" />
+      </div>
+
+      <Skeleton className="h-5 w-20" />
+
+      {/* Recent users avatars placeholders */}
+      <div className="flex -space-x-2">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <Skeleton
+            key={i}
+            className="h-8 w-8 rounded-full border-2 border-background"
+          />
+        ))}
+      </div>
+    </div>
+  )
+}

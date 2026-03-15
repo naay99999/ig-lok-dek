@@ -1,8 +1,10 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { currentUser, users } from "@/lib/mock-data"
+import { RightSidebarSkeleton } from "@/components/skeletons"
 
 const mutualCounts = [3, 5, 2, 8, 4]
 const suggestedUsers = users.slice(0, 5).map((user, index) => ({
@@ -25,6 +27,19 @@ const footerLinks = [
 ]
 
 export function RightSidebar() {
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false)
+    }, 1500)
+    return () => clearTimeout(timer)
+  }, [])
+
+  if (isLoading) {
+    return <RightSidebarSkeleton />
+  }
+
   return (
     <aside className="hidden w-[320px] shrink-0 pt-8 xl:block">
       {/* Current user profile */}

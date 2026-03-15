@@ -1,11 +1,25 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { users } from "@/lib/mock-data"
 import { Send } from "lucide-react"
+import { MessagesButtonSkeleton } from "@/components/skeletons"
 
 export function MessagesButton() {
+  const [isLoading, setIsLoading] = useState(true)
   const recentUsers = users.slice(0, 3)
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false)
+    }, 1500)
+    return () => clearTimeout(timer)
+  }, [])
+
+  if (isLoading) {
+    return <MessagesButtonSkeleton />
+  }
 
   return (
     <button className="fixed bottom-6 right-6 z-50 hidden items-center gap-4 rounded-full bg-white px-4 py-4 shadow-[0_4px_24px_rgba(0,0,0,0.12)] transition-shadow hover:shadow-[0_8px_32px_rgba(0,0,0,0.18)] lg:flex">
