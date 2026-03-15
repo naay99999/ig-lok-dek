@@ -32,7 +32,7 @@ export default function PostPage({ params }: PostPageProps) {
       <div className="min-h-screen bg-background">
         <LeftSidebar />
         <MobileNavbar />
-        <main className="flex min-h-screen items-center justify-center pb-16 pt-14 lg:pb-8 lg:pl-[72px] lg:pt-0 xl:pl-[244px]">
+        <main className="flex min-h-screen items-center justify-center pb-16 pt-14 lg:pb-8 lg:pl-[72px] lg:pt-0">
           <div className="text-center">
             <h1 className="text-2xl font-semibold text-foreground">Post not found</h1>
             <p className="mt-2 text-muted-foreground">This post may have been deleted or the link is incorrect.</p>
@@ -63,7 +63,7 @@ export default function PostPage({ params }: PostPageProps) {
       </div>
 
       {/* Main content */}
-      <div className="lg:pl-[72px] xl:pl-[244px]">
+      <div className="lg:pl-[72px]">
         <main className="pb-16 pt-14 lg:pb-8 lg:pt-8">
           <div className="px-0 lg:px-4">
             {isLoading ? (
