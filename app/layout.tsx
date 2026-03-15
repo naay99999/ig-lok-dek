@@ -7,25 +7,15 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Pictura - Share Your Moments',
-  description: 'A beautiful social photo sharing platform',
-  generator: 'v0.app',
+  title: 'Instagram',
+  description: 'Create an account or log in to Instagram. Share what you\'re into with the people who get you.',
+  generator: 'Instagram',
   icons: {
     icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
+      { url: '/instagram-icon.svg', type: 'image/svg+xml' },
+      { url: '/icon-light-32x32.png', sizes: '32x32', type: 'image/png' },
     ],
-    apple: '/apple-icon.png',
+    apple: [{ url: '/instagram-icon.svg', type: 'image/svg+xml' }],
   },
 }
 
