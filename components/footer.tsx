@@ -2,13 +2,20 @@ import Link from "next/link"
 import { ChevronDown } from "lucide-react"
 
 const footerLinks = [
-  "Privacy Notice",
-  "Consent Notes",
-  "Data Handling",
-  "Session Policy",
-  "Support",
-  "Security",
-  "Status",
+  "Meta",
+  "About",
+  "Blog",
+  "Jobs",
+  "Help",
+  "API",
+  "Privacy",
+  "Terms",
+  "Locations",
+  "Instagram Lite",
+  "Meta AI",
+  "Threads",
+  "Contact Uploading & Non-Users",
+  "Meta Verified",
 ]
 
 export function Footer() {
@@ -32,7 +39,7 @@ export function Footer() {
             <ChevronDown className="h-3 w-3" />
           </button>
           <span className="text-xs text-muted-foreground/70">
-            © 2026 Session Lab
+            © 2026 Instagram from Meta
           </span>
         </div>
       </div>

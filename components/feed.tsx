@@ -74,7 +74,7 @@ export function Feed() {
       <Stories />
 
       {sessionNotice ? (
-        <div className="mx-auto mt-4 flex w-full max-w-[470px] items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+        <div className="mx-auto mt-4 flex w-full max-w-[470px] items-start gap-3 rounded-xl border border-border bg-background px-4 py-3 text-sm text-muted-foreground">
           <Info className="mt-0.5 h-4 w-4 shrink-0" />
           <p>{sessionNotice}</p>
         </div>
@@ -109,8 +109,8 @@ export function Feed() {
               />
             </svg>
           </div>
-          <p className="text-sm font-medium">Preview complete</p>
-          <p className="text-xs">You&apos;ve reached the end of the mock feed.</p>
+          <p className="text-sm font-medium">You&apos;re all caught up</p>
+          <p className="text-xs">You&apos;ve seen all new posts</p>
         </div>
       ) : null}
 

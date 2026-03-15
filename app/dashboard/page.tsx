@@ -1,4 +1,5 @@
 import { SessionsDashboard } from "@/components/dashboard/sessions-dashboard"
+import { formatSupabaseError } from "@/lib/supabase/errors"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import { type VisitorSessionRecord } from "@/lib/visitor-sessions"
 
@@ -22,10 +23,10 @@ export default async function DashboardPage() {
 
     sessions = (data ?? []) as VisitorSessionRecord[]
   } catch (error) {
-    errorMessage =
-      error instanceof Error
-        ? error.message
-        : "Unable to load visitor sessions."
+    errorMessage = formatSupabaseError(
+      error,
+      "Unable to load visitor sessions.",
+    )
   }
 
   return <SessionsDashboard errorMessage={errorMessage} sessions={sessions} />

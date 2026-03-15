@@ -1,6 +1,6 @@
 "use client"
 
-import { useDeferredValue, useMemo, useState } from "react"
+import { useDeferredValue, useEffect, useMemo, useState } from "react"
 import { format } from "date-fns"
 import {
   Filter,
@@ -197,10 +197,15 @@ export function SessionsDashboard({
   errorMessage,
   sessions,
 }: SessionsDashboardProps) {
+  const [hasMounted, setHasMounted] = useState(false)
   const [query, setQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState<ConsentStatus | "all">("all")
   const [selectedSessionId, setSelectedSessionId] = useState<number | null>(null)
   const deferredQuery = useDeferredValue(query)
+
+  useEffect(() => {
+    setHasMounted(true)
+  }, [])
 
   const filteredSessions = useMemo(() => {
     const normalizedQuery = deferredQuery.trim().toLowerCase()
@@ -276,25 +281,32 @@ export function SessionsDashboard({
                   />
                 </label>
 
-                <Select
-                  value={statusFilter}
-                  onValueChange={(value) =>
-                    setStatusFilter(value as ConsentStatus | "all")
-                  }
-                >
-                  <SelectTrigger className="h-12 w-full rounded-full">
+                {hasMounted ? (
+                  <Select
+                    value={statusFilter}
+                    onValueChange={(value) =>
+                      setStatusFilter(value as ConsentStatus | "all")
+                    }
+                  >
+                    <SelectTrigger className="h-12 w-full rounded-full">
+                      <Filter className="h-4 w-4" />
+                      <SelectValue placeholder="Filter status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All consent states</SelectItem>
+                      {consentStatuses.map((status) => (
+                        <SelectItem key={status} value={status}>
+                          {formatConsentLabel(status)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <div className="flex h-12 w-full items-center gap-2 rounded-full border border-input bg-transparent px-3 text-sm text-muted-foreground shadow-xs">
                     <Filter className="h-4 w-4" />
-                    <SelectValue placeholder="Filter status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All consent states</SelectItem>
-                    {consentStatuses.map((status) => (
-                      <SelectItem key={status} value={status}>
-                        {formatConsentLabel(status)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                    <span>All consent states</span>
+                  </div>
+                )}
               </CardContent>
             </Card>
 

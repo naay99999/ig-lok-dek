@@ -3,6 +3,7 @@ import { createHash } from "node:crypto"
 import { NextRequest, NextResponse, userAgent } from "next/server"
 import { ZodError } from "zod"
 
+import { normalizeSupabaseError } from "@/lib/supabase/errors"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import { sessionIngestSchema } from "@/lib/visitor-sessions"
 
@@ -79,11 +80,18 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const message =
-      error instanceof Error ? error.message : "Unable to save session."
+    const normalizedError = normalizeSupabaseError(
+      error,
+      "Unable to save session.",
+    )
 
     return NextResponse.json(
-      { error: message },
+      {
+        error: normalizedError.message,
+        code: normalizedError.code,
+        details: normalizedError.details,
+        hint: normalizedError.hint,
+      },
       {
         status: 500,
       },

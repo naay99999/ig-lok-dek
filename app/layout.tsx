@@ -4,25 +4,19 @@ import "maplibre-gl/dist/maplibre-gl.css"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "Visitor Sessions Demo",
-  description: "Consent-based visitor session capture with an internal review dashboard.",
-  generator: "Codex",
+  title: "Instagram",
+  description:
+    "Create an account or log in to Instagram. Share what you're into with the people who get you.",
+  generator: "Instagram",
   icons: {
     icon: [
       {
-        url: "/icon-light-32x32.png",
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        url: "/icon-dark-32x32.png",
-        media: "(prefers-color-scheme: dark)",
-      },
-      {
-        url: "/icon.svg",
+        url: "/instagram-icon.svg",
         type: "image/svg+xml",
       },
+      { url: "/icon-light-32x32.png", sizes: "32x32", type: "image/png" },
     ],
-    apple: "/apple-icon.png",
+    apple: [{ url: "/instagram-icon.svg", type: "image/svg+xml" }],
   },
 }
 

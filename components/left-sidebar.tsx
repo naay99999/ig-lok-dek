@@ -1,20 +1,22 @@
 "use client"
 
 import type { ReactNode } from "react"
+import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
 import {
-  Bell,
   Compass,
-  FolderKanban,
+  Heart,
   Home,
+  Instagram,
   LayoutGrid,
   type LucideIcon,
   Menu,
-  MessageCircle,
+  PlaySquare,
+  Plus,
   Search,
-  ShieldEllipsis,
+  Send,
 } from "lucide-react"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -23,17 +25,17 @@ import { currentUser } from "@/lib/mock-data"
 
 const navItems = [
   { icon: Home, label: "Home", href: "/", filled: true },
-  { icon: FolderKanban, label: "Collections", href: "#" },
-  { icon: MessageCircle, label: "Messages", href: "#" },
+  { icon: PlaySquare, label: "Reels", href: "#" },
+  { icon: Send, label: "Messages", href: "#" },
   { icon: Search, label: "Search", href: "#" },
   { icon: Compass, label: "Explore", href: "#" },
-  { icon: Bell, label: "Alerts", href: "#", dot: true },
-  { icon: ShieldEllipsis, label: "Dashboard", href: "/dashboard" },
+  { icon: Heart, label: "Notifications", href: "#", dot: true },
+  { icon: Plus, label: "Create", href: "#" },
 ]
 
 const bottomItems = [
   { icon: Menu, label: "More" },
-  { icon: LayoutGrid, label: "Workspaces" },
+  { icon: LayoutGrid, label: "Also from Meta" },
 ]
 
 function SidebarItem({
@@ -57,11 +59,11 @@ function SidebarItem({
 }) {
   const content = (
     <>
-      <div className="relative flex shrink-0 items-center justify-center pointer-events-none">
+      <div className="pointer-events-none relative flex shrink-0 items-center justify-center">
         {Icon ? (
           <Icon
             className={cn("h-6 w-6", isActive && filled && "fill-foreground")}
-            strokeWidth={isActive ? 2.4 : 1.7}
+            strokeWidth={isActive ? 2.5 : 1.5}
           />
         ) : null}
         {children}
@@ -81,7 +83,7 @@ function SidebarItem({
   )
 
   const classes = cn(
-    "flex w-full items-center rounded-xl px-3 py-2 text-left transition-colors hover:bg-accent",
+    "flex w-full items-center rounded-lg px-3 py-2 text-left transition-colors hover:bg-accent",
     isActive && "font-semibold",
   )
 
@@ -103,30 +105,16 @@ export function LeftSidebar() {
       onMouseEnter={() => setIsExpanded(true)}
       onMouseLeave={() => setIsExpanded(false)}
       className={cn(
-        "fixed left-0 top-0 z-40 hidden h-full flex-col justify-between border-r border-border/60 bg-background/95 px-3 py-6 backdrop-blur md:flex",
-        isExpanded ? "w-[220px]" : "w-[74px]",
+        "fixed left-0 top-0 z-40 hidden h-full flex-col justify-between bg-background px-3 py-6 transition-all duration-300 ease-in-out md:flex",
+        isExpanded ? "w-[220px]" : "w-[72px]",
       )}
-    >
+      >
       <div className="space-y-10">
-        <Link
-          href="/"
-          className="flex items-center gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-accent"
-        >
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-            <ShieldEllipsis className="h-5 w-5" />
-          </div>
-          <div
-            className={cn(
-              "overflow-hidden transition-all duration-300",
-              isExpanded ? "w-auto opacity-100" : "w-0 opacity-0",
-            )}
-          >
-            <p className="text-sm font-semibold tracking-wide">Session Lab</p>
-            <p className="text-xs text-muted-foreground">Consent-first demo</p>
-          </div>
+        <Link href="/" className="p-3 hover:bg-accent">
+          <Instagram />
         </Link>
 
-        <nav className="flex flex-col gap-2">
+        <nav className="flex flex-col gap-3">
           {navItems.map((item) => (
             <SidebarItem
               key={item.label}

