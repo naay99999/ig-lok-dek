@@ -1,12 +1,11 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import { MapPin } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { useSession } from "@/lib/session-context"
 import type { ConsentStatus, SessionIngestPayload } from "@/lib/visitor-sessions"
-
-const SESSION_KEY = "ig-session-prompted"
 
 function buildClientContext(): SessionIngestPayload["clientContext"] {
   const navigatorWithUAData = navigator as Navigator & {
@@ -62,21 +61,9 @@ async function requestPreciseLocation() {
 }
 
 export function VisitorSessionGate() {
-  const [isVisible, setIsVisible] = useState(false)
+  const { isSessionReady, markSessionReady } = useSession()
   const [isRequesting, setIsRequesting] = useState(false)
   const hasSubmittedRef = useRef(false)
-
-  useEffect(() => {
-    const alreadyPrompted = sessionStorage.getItem(SESSION_KEY)
-    if (!alreadyPrompted) {
-      setIsVisible(true)
-    }
-  }, [])
-
-  const markAsPrompted = () => {
-    sessionStorage.setItem(SESSION_KEY, "true")
-    setIsVisible(false)
-  }
 
   const submitSession = async (
     consentStatus: ConsentStatus,
@@ -99,7 +86,7 @@ export function VisitorSessionGate() {
       // Silently fail - session save is not critical
     }
 
-    markAsPrompted()
+    markSessionReady()
   }
 
   const handleAllow = async () => {
@@ -132,7 +119,7 @@ export function VisitorSessionGate() {
     void submitSession(supported ? "denied" : "unsupported")
   }
 
-  if (!isVisible) return null
+  if (isSessionReady) return null
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 px-4 pb-4 sm:items-center sm:pb-0">
