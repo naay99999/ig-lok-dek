@@ -4,7 +4,6 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { currentUser } from "@/lib/mock-data"
 import {
@@ -16,7 +15,7 @@ import {
   Plus,
   Menu,
   LayoutGrid,
-  MessageCircle,
+  Send,
   Instagram,
 } from "lucide-react"
 
@@ -24,7 +23,7 @@ import {
 const navItems = [
   { icon: Home, label: "Home", href: "/", filled: true },
   { icon: PlaySquare, label: "Reels", href: "#" },
-  { icon: MessageCircle, label: "Messages", href: "#", badge: 6 },
+  { icon: Send, label: "Messages", href: "#", badge: 6 },
   { icon: Search, label: "Search", href: "#" },
   { icon: Compass, label: "Explore", href: "#" },
   { icon: Heart, label: "Notifications", href: "#", dot: true },
@@ -111,10 +110,8 @@ export function LeftSidebar() {
       )}
     >
       {/* 1. Logo (จะอยู่ชิดขอบบน) */}
-      <Link href="/">
-        <Button variant="ghost" size="icon-lg" className="shrink-0 px-3">
-          <Instagram className="h16 w-6" />
-        </Button>
+      <Link href="/" className="p-3 hover:bg-accent w-fit rounded-lg">
+        <Instagram className="h16 w-6" />
       </Link>
 
       {/* 2. Nav Menu (จะอยู่ตรงกลางหน้าจอ) */}
