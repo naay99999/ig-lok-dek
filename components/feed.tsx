@@ -63,9 +63,9 @@ export function Feed() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col">
       <Stories />
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col">
         {displayedPosts.map((post) => (
           <PostCard key={post.id} post={post} />
         ))}
@@ -73,7 +73,7 @@ export function Feed() {
 
       {/* Loading indicator */}
       {isLoadingMore && (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col">
           <PostCardSkeleton />
         </div>
       )}

@@ -21,8 +21,10 @@ export interface Post {
   likes: number
   comments: Comment[]
   timestamp: string
+  location?: string
   isLiked?: boolean
   isSaved?: boolean
+  isVerified?: boolean
 }
 
 export const currentUser: User = {
@@ -89,8 +91,10 @@ export const posts: Post[] = [
     user: users[0],
     image: "https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=600&h=600&fit=crop",
     caption: "Exploring new horizons ✨ #travel #adventure #wanderlust",
-    likes: 1243,
-    timestamp: "2 hours ago",
+    likes: 2400,
+    timestamp: "22m",
+    location: "Shanghai International Circuit",
+    isVerified: true,
     comments: [
       {
         id: "c1",
@@ -119,9 +123,10 @@ export const posts: Post[] = [
     id: "post-2",
     user: users[1],
     image: "https://images.unsplash.com/photo-1682695796954-bad0d0f59ff1?w=600&h=600&fit=crop",
-    caption: "Golden hour magic 🌅 There's something special about this time of day.",
-    likes: 892,
-    timestamp: "4 hours ago",
+    caption: "Golden hour magic. There's something special about this time of day.",
+    likes: 2800,
+    timestamp: "9m",
+    isVerified: true,
     comments: [
       {
         id: "c4",
@@ -143,9 +148,9 @@ export const posts: Post[] = [
     id: "post-3",
     user: users[2],
     image: "https://images.unsplash.com/photo-1682686581498-5e85c7228c9d?w=600&h=600&fit=crop",
-    caption: "Architecture appreciation post 🏛️ The details in this building are incredible.",
+    caption: "Architecture appreciation post. The details in this building are incredible.",
     likes: 567,
-    timestamp: "6 hours ago",
+    timestamp: "7h",
     comments: [
       {
         id: "c6",

@@ -2,9 +2,11 @@
 
 import { use, useState, useEffect } from "react"
 import Link from "next/link"
-import { Navbar } from "@/components/navbar"
+import { LeftSidebar } from "@/components/left-sidebar"
+import { MobileNavbar } from "@/components/navbar"
 import { PostDetail } from "@/components/post-detail"
 import { PostDetailSkeleton } from "@/components/skeletons"
+import { MessagesButton } from "@/components/messages-button"
 import { getPostById } from "@/lib/mock-data"
 import { ArrowLeft } from "lucide-react"
 
@@ -28,8 +30,9 @@ export default function PostPage({ params }: PostPageProps) {
   if (!post && !isLoading) {
     return (
       <div className="min-h-screen bg-background">
-        <Navbar />
-        <main className="flex min-h-[calc(100vh-56px)] items-center justify-center pb-16 pt-14 md:pb-8 md:pt-16">
+        <LeftSidebar />
+        <MobileNavbar />
+        <main className="flex min-h-screen items-center justify-center pb-16 pt-14 lg:pb-8 lg:pl-[72px] lg:pt-0 xl:pl-[244px]">
           <div className="text-center">
             <h1 className="text-2xl font-semibold text-foreground">Post not found</h1>
             <p className="mt-2 text-muted-foreground">This post may have been deleted or the link is incorrect.</p>
@@ -47,10 +50,11 @@ export default function PostPage({ params }: PostPageProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
+      <LeftSidebar />
+      <MobileNavbar />
       
       {/* Back button - mobile only */}
-      <div className="fixed left-0 right-0 top-0 z-50 flex h-14 items-center border-b border-border bg-background px-4 md:hidden">
+      <div className="fixed left-0 right-0 top-0 z-50 flex h-14 items-center border-b border-border bg-background px-4 lg:hidden">
         <Link href="/" className="flex items-center gap-2 text-foreground">
           <ArrowLeft className="h-6 w-6" />
         </Link>
@@ -59,15 +63,19 @@ export default function PostPage({ params }: PostPageProps) {
       </div>
 
       {/* Main content */}
-      <main className="pb-16 pt-14 md:pb-8 md:pt-20">
-        <div className="px-0 md:px-4">
-          {isLoading ? (
-            <PostDetailSkeleton />
-          ) : post ? (
-            <PostDetail post={post} />
-          ) : null}
-        </div>
-      </main>
+      <div className="lg:pl-[72px] xl:pl-[244px]">
+        <main className="pb-16 pt-14 lg:pb-8 lg:pt-8">
+          <div className="px-0 lg:px-4">
+            {isLoading ? (
+              <PostDetailSkeleton />
+            ) : post ? (
+              <PostDetail post={post} />
+            ) : null}
+          </div>
+        </main>
+      </div>
+
+      <MessagesButton />
     </div>
   )
 }

@@ -4,12 +4,12 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 export function StoriesSkeleton() {
   return (
-    <div className="border-b border-border bg-background py-4 md:rounded-lg md:border">
-      <div className="flex gap-4 overflow-hidden px-4">
+    <div className="py-2">
+      <div className="flex gap-4 overflow-hidden px-1">
         {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className="flex flex-col items-center gap-1.5">
-            <Skeleton className="h-[66px] w-[66px] rounded-full" />
-            <Skeleton className="h-3 w-14" />
+          <div key={i} className="flex flex-col items-center gap-1">
+            <Skeleton className="h-[58px] w-[58px] rounded-full" />
+            <Skeleton className="h-3 w-12" />
           </div>
         ))}
       </div>
@@ -19,48 +19,41 @@ export function StoriesSkeleton() {
 
 export function PostCardSkeleton() {
   return (
-    <article className="border-b border-border bg-background pb-4 md:rounded-lg md:border md:pb-0">
+    <article className="border-b border-border bg-background pb-3">
       {/* Header */}
-      <div className="flex items-center justify-between px-3 py-3">
+      <div className="flex items-center justify-between px-1 py-3">
         <div className="flex items-center gap-3">
           <Skeleton className="h-9 w-9 rounded-full" />
-          <Skeleton className="h-4 w-24" />
+          <div className="flex flex-col gap-1">
+            <Skeleton className="h-4 w-32" />
+            <Skeleton className="h-3 w-20" />
+          </div>
         </div>
         <Skeleton className="h-5 w-5" />
       </div>
 
       {/* Image */}
-      <Skeleton className="aspect-square w-full" />
+      <Skeleton className="aspect-square w-full rounded-sm" />
 
       {/* Actions */}
-      <div className="flex items-center justify-between px-3 pt-3">
+      <div className="flex items-center justify-between px-1 pt-3">
         <div className="flex items-center gap-4">
           <Skeleton className="h-6 w-6" />
-          <Skeleton className="h-6 w-6" />
+          <Skeleton className="h-6 w-12" />
           <Skeleton className="h-6 w-6" />
         </div>
         <Skeleton className="h-6 w-6" />
       </div>
 
-      {/* Likes */}
-      <div className="px-3 pt-2">
-        <Skeleton className="h-4 w-20" />
-      </div>
-
       {/* Caption */}
-      <div className="px-3 pt-1">
+      <div className="px-1 pt-2">
         <Skeleton className="h-4 w-full" />
         <Skeleton className="mt-1 h-4 w-3/4" />
       </div>
 
-      {/* Comments */}
-      <div className="px-3 pt-1">
-        <Skeleton className="h-3 w-28" />
-      </div>
-
-      {/* Timestamp */}
-      <div className="px-3 py-2">
-        <Skeleton className="h-2 w-16" />
+      {/* See translation */}
+      <div className="px-1 pt-1">
+        <Skeleton className="h-3 w-20" />
       </div>
     </article>
   )
@@ -68,9 +61,9 @@ export function PostCardSkeleton() {
 
 export function FeedSkeleton() {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col">
       <StoriesSkeleton />
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col">
         {Array.from({ length: 3 }).map((_, i) => (
           <PostCardSkeleton key={i} />
         ))}
