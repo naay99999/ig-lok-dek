@@ -8,8 +8,8 @@ export function StoriesSkeleton() {
       <div className="flex gap-4 overflow-hidden px-1">
         {Array.from({ length: 8 }).map((_, i) => (
           <div key={i} className="flex flex-col items-center gap-1">
-            <Skeleton className="h-[58px] w-[58px] rounded-full" />
-            <Skeleton className="h-3 w-12" />
+            <Skeleton className="h-[92px] w-[92px] rounded-full" />
+            <Skeleton className="h-3 w-[58px]" />
           </div>
         ))}
       </div>
@@ -23,7 +23,7 @@ export function PostCardSkeleton() {
       {/* Header */}
       <div className="flex items-center justify-between px-1 py-3">
         <div className="flex items-center gap-3">
-          <Skeleton className="h-9 w-9 rounded-full" />
+          <Skeleton className="h-10 w-10 rounded-full" />
           <div className="flex flex-col gap-1">
             <Skeleton className="h-4 w-32" />
             <Skeleton className="h-3 w-20" />

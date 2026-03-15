@@ -113,7 +113,7 @@ export function LeftSidebar() {
       {/* 1. Logo (จะอยู่ชิดขอบบน) */}
       <Link href="/">
         <Button variant="ghost" size="icon-lg" className="shrink-0 px-3">
-          <Instagram className="h16 w-6" />
+          <Instagram className="h-6 w-6" />
         </Button>
       </Link>
 
