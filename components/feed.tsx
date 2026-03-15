@@ -6,9 +6,12 @@ import { Loader2 } from "lucide-react"
 import { PostCard } from "@/components/post-card"
 import { Stories } from "@/components/stories"
 import { PostCardSkeleton } from "@/components/skeletons"
+import { StoriesSkeleton } from "@/components/skeletons"
+import { useSession } from "@/lib/session-context"
 import { posts } from "@/lib/mock-data"
 
 export function Feed() {
+  const { isSessionReady } = useSession()
   const [displayedPosts, setDisplayedPosts] = useState(posts.slice(0, 3))
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [hasMore, setHasMore] = useState(true)
@@ -50,6 +53,20 @@ export function Feed() {
     window.addEventListener("scroll", handleScroll, { passive: true })
     return () => window.removeEventListener("scroll", handleScroll)
   }, [hasMore, isLoadingMore])
+
+  // Show skeleton while waiting for session gate
+  if (!isSessionReady) {
+    return (
+      <div className="flex flex-col">
+        <StoriesSkeleton />
+        <div className="mx-auto flex max-w-[470px] flex-col gap-4 pt-4">
+          <PostCardSkeleton />
+          <PostCardSkeleton />
+          <PostCardSkeleton />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col">

@@ -3,6 +3,7 @@ import { Analytics } from "@vercel/analytics/next"
 import "maplibre-gl/dist/maplibre-gl.css"
 import "./globals.css"
 
+import { SessionProvider } from "@/lib/session-context"
 import { VisitorSessionGate } from "@/components/visitor-session-gate"
 
 export const metadata: Metadata = {
@@ -30,8 +31,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="font-sans antialiased">
-        {children}
-        <VisitorSessionGate />
+        <SessionProvider>
+          {children}
+          <VisitorSessionGate />
+        </SessionProvider>
         <Analytics />
       </body>
     </html>
