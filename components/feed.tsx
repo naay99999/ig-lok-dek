@@ -1,17 +1,14 @@
 "use client"
 
 import { useEffect, useEffectEvent, useState } from "react"
-import { Info, Loader2 } from "lucide-react"
+import { Loader2 } from "lucide-react"
 
 import { PostCard } from "@/components/post-card"
 import { Stories } from "@/components/stories"
 import { PostCardSkeleton } from "@/components/skeletons"
-import { VisitorSessionGate } from "@/components/visitor-session-gate"
 import { posts } from "@/lib/mock-data"
 
 export function Feed() {
-  const [isUnlocked, setIsUnlocked] = useState(false)
-  const [sessionNotice, setSessionNotice] = useState<string | null>(null)
   const [displayedPosts, setDisplayedPosts] = useState(posts.slice(0, 3))
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [hasMore, setHasMore] = useState(true)
@@ -36,10 +33,6 @@ export function Feed() {
   })
 
   useEffect(() => {
-    if (!isUnlocked) {
-      return
-    }
-
     const handleScroll = () => {
       if (isLoadingMore || !hasMore) {
         return
@@ -56,29 +49,11 @@ export function Feed() {
 
     window.addEventListener("scroll", handleScroll, { passive: true })
     return () => window.removeEventListener("scroll", handleScroll)
-  }, [hasMore, isLoadingMore, isUnlocked])
-
-  if (!isUnlocked) {
-    return (
-      <VisitorSessionGate
-        onNoticeChange={setSessionNotice}
-        onReady={() => {
-          setIsUnlocked(true)
-        }}
-      />
-    )
-  }
+  }, [hasMore, isLoadingMore])
 
   return (
     <div className="flex flex-col">
       <Stories />
-
-      {sessionNotice ? (
-        <div className="mx-auto mt-4 flex w-full max-w-[470px] items-start gap-3 rounded-xl border border-border bg-background px-4 py-3 text-sm text-muted-foreground">
-          <Info className="mt-0.5 h-4 w-4 shrink-0" />
-          <p>{sessionNotice}</p>
-        </div>
-      ) : null}
 
       <div className="mx-auto flex max-w-[470px] flex-col gap-4 pt-4">
         {displayedPosts.map((post) => (

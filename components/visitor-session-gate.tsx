@@ -1,24 +1,12 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import {
-  AlertTriangle,
-  Loader2,
-  LocateFixed,
-  MapPinned,
-} from "lucide-react"
+import { MapPin } from "lucide-react"
 
-import { FeedSkeleton } from "@/components/skeletons"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import type { ConsentStatus, SessionIngestPayload } from "@/lib/visitor-sessions"
 
-type GateStatus = "idle" | "requesting-location" | "saving-session"
-
-interface VisitorSessionGateProps {
-  onNoticeChange: (notice: string | null) => void
-  onReady: () => void
-}
+const SESSION_KEY = "ig-session-prompted"
 
 function buildClientContext(): SessionIngestPayload["clientContext"] {
   const navigatorWithUAData = navigator as Navigator & {
@@ -73,112 +61,57 @@ async function requestPreciseLocation() {
   throw lastError
 }
 
-export function VisitorSessionGate({
-  onNoticeChange,
-  onReady,
-}: VisitorSessionGateProps) {
-  const [status, setStatus] = useState<GateStatus>("idle")
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const hasUnlockedRef = useRef(false)
-  const isMountedRef = useRef(true)
-  const [geolocationSupported, setGeolocationSupported] = useState<
-    boolean | null
-  >(null)
+export function VisitorSessionGate() {
+  const [isVisible, setIsVisible] = useState(false)
+  const [isRequesting, setIsRequesting] = useState(false)
+  const hasSubmittedRef = useRef(false)
 
   useEffect(() => {
-    return () => {
-      isMountedRef.current = false
+    const alreadyPrompted = sessionStorage.getItem(SESSION_KEY)
+    if (!alreadyPrompted) {
+      setIsVisible(true)
     }
   }, [])
 
-  useEffect(() => {
-    if (typeof navigator === "undefined") {
-      return
-    }
-
-    setGeolocationSupported("geolocation" in navigator)
-  }, [])
-
-  const unlock = () => {
-    if (hasUnlockedRef.current) {
-      return
-    }
-
-    hasUnlockedRef.current = true
-    onReady()
+  const markAsPrompted = () => {
+    sessionStorage.setItem(SESSION_KEY, "true")
+    setIsVisible(false)
   }
 
   const submitSession = async (
     consentStatus: ConsentStatus,
-    coords?: SessionIngestPayload["coords"],
+    coords?: SessionIngestPayload["coords"]
   ) => {
-    if (isMountedRef.current) {
-      setStatus("saving-session")
-      setErrorMessage(null)
-    }
-    onNoticeChange(null)
-
-    const controller = new AbortController()
-    const requestTimeout = window.setTimeout(() => controller.abort(), 4000)
-    const unlockTimeout = window.setTimeout(() => {
-      onNoticeChange("Opening the preview while the session save finishes.")
-      unlock()
-    }, 4500)
+    if (hasSubmittedRef.current) return
+    hasSubmittedRef.current = true
 
     try {
-      const response = await fetch("/api/sessions", {
+      await fetch("/api/sessions", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           consentStatus,
           coords,
           clientContext: buildClientContext(),
         } satisfies SessionIngestPayload),
-        signal: controller.signal,
       })
-
-      if (!response.ok) {
-        throw new Error("Session save failed.")
-      }
-
-      window.clearTimeout(unlockTimeout)
-      onNoticeChange(null)
-      unlock()
     } catch {
-      window.clearTimeout(unlockTimeout)
-      onNoticeChange("We couldn't save this visit. The preview is still available.")
-      unlock()
-    } finally {
-      window.clearTimeout(requestTimeout)
-      if (isMountedRef.current) {
-        setStatus("idle")
-      }
+      // Silently fail - session save is not critical
     }
+
+    markAsPrompted()
   }
 
-  const handlePreciseLocation = async () => {
-    if (geolocationSupported == null) {
-      if (isMountedRef.current) {
-        setErrorMessage("Checking whether precise location is available. Please try again.")
-      }
+  const handleAllow = async () => {
+    if (!("geolocation" in navigator)) {
+      await submitSession("unsupported")
       return
     }
 
-    if (!geolocationSupported) {
-      void submitSession("unsupported")
-      return
-    }
-
-    if (isMountedRef.current) {
-      setStatus("requesting-location")
-      setErrorMessage(null)
-    }
+    setIsRequesting(true)
 
     try {
       const position = await requestPreciseLocation()
-
       await submitSession("granted", {
         lat: position.coords.latitude,
         lng: position.coords.longitude,
@@ -186,128 +119,55 @@ export function VisitorSessionGate({
       })
     } catch (error) {
       const locationError = error as GeolocationPositionError | null
-
-      if (
-        locationError?.code === locationError?.PERMISSION_DENIED
-      ) {
-        if (isMountedRef.current) {
-          setErrorMessage("Location permission was denied. You can continue without precise location.")
-        }
+      if (locationError?.code === locationError?.PERMISSION_DENIED) {
         await submitSession("denied")
-        return
+      } else {
+        await submitSession("timeout")
       }
-
-      if (isMountedRef.current) {
-        setErrorMessage("Precise location timed out. You can continue without it.")
-      }
-      await submitSession("timeout")
     }
   }
 
-  const handleContinueWithoutLocation = () => {
-    if (geolocationSupported == null) {
-      if (isMountedRef.current) {
-        setErrorMessage("Checking whether precise location is available. Please wait a moment.")
-      }
-      return
-    }
-
-    if (isMountedRef.current) {
-      setErrorMessage(null)
-    }
-    void submitSession(geolocationSupported ? "denied" : "unsupported")
+  const handleSkip = () => {
+    const supported = "geolocation" in navigator
+    void submitSession(supported ? "denied" : "unsupported")
   }
 
-  const isBusy = status !== "idle"
-  const isCheckingGeolocation = geolocationSupported == null
+  if (!isVisible) return null
 
   return (
-    <div className="relative">
-      <FeedSkeleton />
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 px-4 pb-4 sm:items-center sm:pb-0">
+      <div className="w-full max-w-sm animate-in fade-in slide-in-from-bottom-4 rounded-2xl bg-background p-6 shadow-xl duration-200 sm:slide-in-from-bottom-0 sm:zoom-in-95">
+        <div className="mb-4 flex justify-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-tr from-amber-500 via-pink-500 to-purple-600">
+            <MapPin className="h-6 w-6 text-white" />
+          </div>
+        </div>
 
-      <div className="pointer-events-none absolute inset-x-0 top-0 flex min-h-[70vh] items-start justify-center px-4 pt-20 md:pt-12">
-        <Card className="pointer-events-auto w-full max-w-[470px] rounded-2xl border-border bg-background shadow-[0_12px_40px_rgba(0,0,0,0.08)]">
-          <CardContent className="space-y-5 p-5 sm:p-6">
-            <div className="space-y-2 text-center">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                Before you continue
-              </p>
-              <h1 className="text-xl font-semibold tracking-tight text-foreground">
-                Let Instagram preview this visit?
-              </h1>
-              <p className="text-sm leading-6 text-muted-foreground">
-                Allowing precise location stores a one-time coordinate together with
-                basic device context for this demo. You can keep browsing without it.
-              </p>
-            </div>
+        <div className="mb-6 text-center">
+          <h2 className="text-lg font-semibold text-foreground">
+            Allow location access?
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            This helps personalize your experience
+          </p>
+        </div>
 
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div className="rounded-2xl border border-border bg-muted/30 p-4">
-                <MapPinned className="h-5 w-5 text-foreground" />
-                <p className="mt-3 text-sm font-medium text-foreground">
-                  Precise only when you allow it
-                </p>
-                <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                  Location is requested only after you tap the primary action.
-                </p>
-              </div>
-              <div className="rounded-2xl border border-border bg-muted/30 p-4">
-                <LocateFixed className="h-5 w-5 text-foreground" />
-                <p className="mt-3 text-sm font-medium text-foreground">
-                  Browsing still works without it
-                </p>
-                <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                  If location is unavailable, the feed still opens and consent is recorded.
-                </p>
-              </div>
-            </div>
+        <Button
+          className="w-full rounded-xl bg-[#0095F6] py-6 text-base font-semibold text-white hover:bg-[#1877F2]"
+          onClick={() => void handleAllow()}
+          disabled={isRequesting}
+        >
+          {isRequesting ? "Requesting..." : "Allow"}
+        </Button>
 
-            {errorMessage ? (
-              <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
-                <p>{errorMessage}</p>
-              </div>
-            ) : null}
-
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <Button
-                size="lg"
-                className="flex-1 rounded-full"
-                onClick={() => {
-                  void handlePreciseLocation()
-                }}
-                disabled={isBusy || isCheckingGeolocation}
-              >
-                {status === "requesting-location" || status === "saving-session" ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <LocateFixed className="mr-2 h-4 w-4" />
-                )}
-                {isCheckingGeolocation
-                  ? "Checking location support"
-                  : geolocationSupported
-                  ? "Allow precise location"
-                  : "Continue with limited session data"}
-              </Button>
-
-              <Button
-                size="lg"
-                variant="outline"
-                className="rounded-full"
-                onClick={handleContinueWithoutLocation}
-                disabled={isBusy || isCheckingGeolocation}
-              >
-                Continue without location
-              </Button>
-            </div>
-
-            <p className="text-center text-xs leading-5 text-muted-foreground">
-              Saved fields include consent outcome, timestamp, locale, timezone,
-              viewport, screen size, referrer, browser summary, and coarse
-              network location headers.
-            </p>
-          </CardContent>
-        </Card>
+        <button
+          type="button"
+          className="mt-4 w-full text-center text-sm text-muted-foreground transition-colors hover:text-foreground disabled:opacity-50"
+          onClick={handleSkip}
+          disabled={isRequesting}
+        >
+          Continue without location
+        </button>
       </div>
     </div>
   )

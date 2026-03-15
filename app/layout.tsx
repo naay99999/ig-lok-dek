@@ -3,6 +3,8 @@ import { Analytics } from "@vercel/analytics/next"
 import "maplibre-gl/dist/maplibre-gl.css"
 import "./globals.css"
 
+import { VisitorSessionGate } from "@/components/visitor-session-gate"
+
 export const metadata: Metadata = {
   title: "Instagram",
   description:
@@ -29,6 +31,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="font-sans antialiased">
         {children}
+        <VisitorSessionGate />
         <Analytics />
       </body>
     </html>
