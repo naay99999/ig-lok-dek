@@ -4,10 +4,11 @@ import Link from "next/link"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { currentUser, users } from "@/lib/mock-data"
 
+const mutualCounts = [3, 5, 2, 8, 4]
 const suggestedUsers = users.slice(0, 5).map((user, index) => ({
   ...user,
   followedBy: index % 2 === 0 ? "alex_photo" : "sarah.designs",
-  mutualCount: Math.floor(Math.random() * 8) + 1,
+  mutualCount: mutualCounts[index],
 }))
 
 const footerLinks = [
